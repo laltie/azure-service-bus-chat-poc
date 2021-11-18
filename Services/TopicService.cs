@@ -16,7 +16,6 @@ namespace AzureServiceBusChatPOC.Services
         private readonly ServiceBusAdministrationClient _adminClient;
         private readonly ServiceBusSender _topicClient;
         private readonly string _topicName;
-        private SubscriptionProperties _subProperties;
 
         public TopicService(IConfiguration config, ServiceBusClient sbClient)
         {
