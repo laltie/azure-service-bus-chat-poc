@@ -28,20 +28,20 @@ namespace AzureServiceBusChatPOC.Services
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            //RegisterOnMessageHandlerAndReceiveMessages();
+            RegisterOnMessageHandlerAndReceiveMessages();
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            //var proc = _sbClient.CreateProcessor(_config.GetSection("AzureServiceBus")["TopicName"], "laltie", new ServiceBusProcessorOptions());
-            //proc.StopProcessingAsync().ConfigureAwait(false);
+            var proc = _sbClient.CreateProcessor(_config.GetSection("AzureServiceBus")["TopicName"], "laltie", new ServiceBusProcessorOptions());
+            proc.StopProcessingAsync().ConfigureAwait(false);
             return Task.CompletedTask;
         }
 
         public void RegisterOnMessageHandlerAndReceiveMessages()
         {
-            var proc = _sbClient.CreateProcessor(_config.GetSection("AzureServiceBus")["TopicName"], "laltie", new ServiceBusProcessorOptions());
+            var proc = _sbClient.CreateProcessor(_config.GetSection("AzureServiceBus")["TopicName"], "test", new ServiceBusProcessorOptions());
             proc.ProcessMessageAsync += MessageHandler;
             proc.ProcessErrorAsync += ErrorHandler;
             proc.StartProcessingAsync().ConfigureAwait(false);

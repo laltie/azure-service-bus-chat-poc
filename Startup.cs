@@ -34,7 +34,8 @@ namespace AzureServiceBusChatPOC
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<TopicService>();
-            services.AddHostedService<ASBHostedService>();
+            //services.AddHostedService<ASBHostedService>();
+            //services.AddHostedService<Worker>();
             services.AddAzureClients(builder =>
             {
                 builder.AddServiceBusClient(Configuration.GetConnectionString("ServiceBus"));
