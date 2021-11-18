@@ -37,7 +37,7 @@ namespace AzureServiceBusChatPOC.Services
 
         public ServiceBusProcessor GetProcessor(string subname)
         {
-            return _sbClient.CreateProcessor(_topicName, subname, new ServiceBusProcessorOptions());
+            return _sbClient.CreateProcessor(_topicName, subname, new ServiceBusProcessorOptions() { AutoCompleteMessages = false });
         }
 
         public async Task CreateSubscription(string subName)
@@ -84,8 +84,8 @@ namespace AzureServiceBusChatPOC.Services
         public async Task MessageHandler(ProcessMessageEventArgs args)
         {
             //var context = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
-            string body = args.Message.Body.ToString();
-            Console.WriteLine($"{args.Message.Subject}  >  {Encoding.UTF8.GetString(args.Message.Body)}");
+            //string body = args.Message.Body.ToString();
+            //Console.WriteLine($"{args.Message.Subject}  >  {Encoding.UTF8.GetString(args.Message.Body)}");
             // complete the message. messages is deleted from the subscription. 
             await _hubContext.Clients.All.SendAsync("ReceiveMessage", args.Message.Subject, args.Message.Body);
             await args.CompleteMessageAsync(args.Message);

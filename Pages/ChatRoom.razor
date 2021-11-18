@@ -98,8 +98,6 @@ else
         .WithUrl(_hubUrl)
         .Build();
         _hubConnection.ServerTimeout = TimeSpan.FromMinutes(5);
-        _hubConnection.ConfigureAwait(true);
-
 
         _hubConnection.On<string, string>("ReceiveMessage", BroadcastMessage);
         await _hubConnection.StartAsync();

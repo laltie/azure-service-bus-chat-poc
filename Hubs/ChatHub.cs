@@ -1,5 +1,4 @@
 ﻿using Azure.Messaging.ServiceBus;
-using AzureServiceBusChatPOC.Interface;
 using AzureServiceBusChatPOC.Services;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AzureServiceBusChatPOC.Hubs
 {
-    public class ChatHub : Hub<IChatHub>
+    public class ChatHub : Hub
     {
         public const string HubUrl = "/chat";
 
@@ -40,6 +39,22 @@ namespace AzureServiceBusChatPOC.Hubs
             await _topicService.RegisterMessageProcessing(username);
         }
 
+        public async Task MessageHandler(ProcessMessageEventArgs args)
+        {
+            //var context = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+            //string body = args.Message.Body.ToString();
+            //Console.WriteLine($"{args.Message.Subject}  >  {Encoding.UTF8.GetString(args.Message.Body)}");
+            // complete the message. messages is deleted from the subscription. 
+            await Clients.All.SendAsync("ReceiveMessage", args.Message.Subject, args.Message.Body);
+            await args.CompleteMessageAsync(args.Message);
+        }
+
+        public Task ErrorHandler(ProcessErrorEventArgs args)
+        {
+            Console.WriteLine(args.Exception.ToString());
+            return Task.CompletedTask;
+        }
+
         public async Task Send(string username, string message)
         {
             await _topicService.SendMessage(username, message);
@@ -50,6 +65,8 @@ namespace AzureServiceBusChatPOC.Hubs
         {
             await Send(username, $"[Notice] {username} leaved chat room.");
             var proc = _topicService.GetProcessor(username);
+            proc.ProcessMessageAsync -= MessageHandler;
+            proc.ProcessErrorAsync -= ErrorHandler;
             await proc.StopProcessingAsync();
             await _topicService.RemoveSubscription(username);
         }
