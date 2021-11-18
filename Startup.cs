@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AzureServiceBusChatPOC.Data;
 using Microsoft.Extensions.Azure;
+using AzureServiceBusChatPOC.Services;
+using AzureServiceBusChatPOC.Hubs;
 
 namespace AzureServiceBusChatPOC
 {
@@ -30,6 +32,7 @@ namespace AzureServiceBusChatPOC
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+            services.AddSingleton<TopicService>();
             services.AddAzureClients(builder =>
             {
                 builder.AddServiceBusClient(Configuration.GetConnectionString("ServiceBus"));
@@ -59,7 +62,7 @@ namespace AzureServiceBusChatPOC
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
-                endpoints.MapHub<BlazorChatSampleHub>(BlazorChatSampleHub.HubUrl);
+                endpoints.MapHub<ChatHub>(ChatHub.HubUrl);
             });
         }
     }
